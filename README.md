@@ -1,15 +1,15 @@
-# .
+# Travian Crop Finder
 
-To install dependencies:
+Finds croppers in travian.
 
-```bash
-bun install
+## Usage
+
 ```
-
-To run:
-
-```bash
+echo "AUTH_COOKIE=cookie" > .env
+bun install
 bun run main.ts
 ```
+
+Change config in `main.ts` to change the search parameters.
 
 This project was created using `bun init` in bun v1.0.10. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
