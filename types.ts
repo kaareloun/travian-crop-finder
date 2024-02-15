@@ -7,3 +7,5 @@ export type Config = {
   searchRadius: number;
   types: number[];
 };
+
+export type Village = { x: number; y: number; distance: number; size: string };
