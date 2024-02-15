@@ -1,6 +1,7 @@
 import { Config } from './types';
 
 const CONFIG: Config = {
+  server: 'ts1.x1.europe.travian.com',
   village: {
     x: 150,
     y: 150,
@@ -32,17 +33,14 @@ try {
         const promise = new Promise(async (resolve) => {
           const x = CONFIG.village.x + dx;
           const y = CONFIG.village.y + dy;
-          const response = await fetch(
-            'https://ts1.x1.europe.travian.com/api/v1/map/tile-details',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Cookie': process.env.AUTH_TOKEN || '',
-              },
-              body: JSON.stringify({ x, y }),
-            }
-          );
+          const response = await fetch(`https://${CONFIG.server}/api/v1/map/tile-details`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cookie': process.env.AUTH_TOKEN || '',
+            },
+            body: JSON.stringify({ x, y }),
+          });
 
           const responseData = await response.json();
           const match = cropTilePattern.exec(responseData.html);
