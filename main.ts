@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Config } from './types';
 
 const CONFIG: Config = {
@@ -33,36 +32,20 @@ try {
         const promise = new Promise(async (resolve) => {
           const x = CONFIG.village.x + dx;
           const y = CONFIG.village.y + dy;
-
-          const response = await axios.post<{ html: string }>(
+          const response = await fetch(
             'https://ts1.x1.europe.travian.com/api/v1/map/tile-details',
-            { x, y },
             {
+              method: 'POST',
               headers: {
-                'authority': 'ts1.x1.europe.travian.com',
-                'accept': 'application/json, text/javascript, */*; q=0.01',
-                'accept-language': 'en-US,en;q=0.9',
-                'cache-control': 'no-cache',
-                'content-type': 'application/json; charset=UTF-8',
-                'cookie': process.env.AUTH_TOKEN,
-                'origin': 'https://ts1.x1.europe.travian.com',
-                'pragma': 'no-cache',
-                'referer': `https://ts1.x1.europe.travian.com/karte.php?zoom=1&x=${x}&y=${y}`,
-                'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
-                'sec-ch-ua-mobile': '?0',
-                'sec-ch-ua-platform': '"Linux"',
-                'sec-fetch-dest': 'empty',
-                'sec-fetch-mode': 'cors',
-                'sec-fetch-site': 'same-origin',
-                'user-agent':
-                  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'x-requested-with': 'XMLHttpRequest',
-                'x-version': '2390.8',
+                'Content-Type': 'application/json',
+                'Cookie': process.env.AUTH_TOKEN || '',
               },
+              body: JSON.stringify({ x, y }),
             }
           );
 
-          const match = cropTilePattern.exec(response.data.html);
+          const responseData = await response.json();
+          const match = cropTilePattern.exec(responseData.html);
           if (match) {
             process.stdout.write('\n');
             console.log(`${match[1]}-cropper found at [${x}, ${y}]. Distance ${r}`);

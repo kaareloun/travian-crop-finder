@@ -1,5 +1,5 @@
 {
-  "name": ".",
+  "name": "travian-crop-finder",
   "module": "main.ts",
   "type": "module",
   "devDependencies": {
@@ -7,8 +7,5 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "axios": "^1.6.7"
   }
 }
