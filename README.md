@@ -5,6 +5,8 @@ Finds croppers in travian.
 ## Usage
 
 ```
+git clone git@github.com:kaareloun/travian-crop-finder.git
+cd travian-crop-finder
 echo "AUTH_COOKIE=cookie" > .env
 bun install
 bun run main.ts
