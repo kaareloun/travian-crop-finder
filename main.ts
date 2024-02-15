@@ -1,11 +1,13 @@
 import axios from 'axios';
+import { Config } from './types';
 
-const CONFIG = {
+const CONFIG: Config = {
   village: {
-    x: 77,
-    y: 81,
+    x: 150,
+    y: 150,
   },
-  radius: 50,
+  searchRadius: 50,
+  types: [9, 15],
 };
 
 if (!process.env.AUTH_TOKEN) {
@@ -13,23 +15,24 @@ if (!process.env.AUTH_TOKEN) {
   process.exit(1);
 }
 
-const findCroppers = async (
-  centerX: number,
-  centerY: number,
-  radius: number,
-  authToken: string
-) => {
-  try {
-    const cropTilePattern = /title=\"Crop\"><\/i><\/td>\s*<td class=\"val\">9<\/td>/;
+try {
+  const results: { x: number; y: number; distance: number }[] = [];
+  const cropTilePattern = new RegExp(
+    `title="Crop"><\/i><\/td>\\s*<td class="val">(${CONFIG.types.join('|')})<\/td>`
+  );
 
-    for (let r = 1; r <= radius; r++) {
-      for (let dx = -r; dx <= r; dx++) {
-        for (let dy = -r; dy <= r; dy++) {
-          if (Math.abs(dx) !== r && Math.abs(dy) !== r) {
-            continue;
-          }
-          const x = centerX + dx;
-          const y = centerY + dy;
+  let promises: Promise<any>[] = [];
+  for (let r = 1; r <= CONFIG.searchRadius; r++) {
+    process.stdout.write(`${r}`);
+    for (let dx = -r; dx <= r; dx++) {
+      for (let dy = -r; dy <= r; dy++) {
+        if (Math.abs(dx) !== r && Math.abs(dy) !== r) {
+          continue;
+        }
+
+        const promise = new Promise(async (resolve) => {
+          const x = CONFIG.village.x + dx;
+          const y = CONFIG.village.y + dy;
 
           const response = await axios.post<{ html: string }>(
             'https://ts1.x1.europe.travian.com/api/v1/map/tile-details',
@@ -41,7 +44,7 @@ const findCroppers = async (
                 'accept-language': 'en-US,en;q=0.9',
                 'cache-control': 'no-cache',
                 'content-type': 'application/json; charset=UTF-8',
-                'cookie': authToken,
+                'cookie': process.env.AUTH_TOKEN,
                 'origin': 'https://ts1.x1.europe.travian.com',
                 'pragma': 'no-cache',
                 'referer': `https://ts1.x1.europe.travian.com/karte.php?zoom=1&x=${x}&y=${y}`,
@@ -59,18 +62,31 @@ const findCroppers = async (
             }
           );
 
-          if (cropTilePattern.test(response.data.html)) {
+          const match = cropTilePattern.exec(response.data.html);
+          if (match) {
             process.stdout.write('\n');
-            console.log(`Cropper found at [${x}, ${y}]. Distance ${r}`);
+            console.log(`${match[1]}-cropper found at [${x}, ${y}]. Distance ${r}`);
+            results.push({ x, y, distance: r });
           } else {
             process.stdout.write('.');
           }
+
+          resolve(null);
+        });
+
+        promises.push(promise);
+        if (promises.length >= 10) {
+          await Promise.all(promises);
+          promises = [];
         }
       }
     }
-  } catch (error) {
-    console.error('Error fetching tile details:', error);
   }
-};
 
-findCroppers(CONFIG.village.x, CONFIG.village.y, CONFIG.radius, process.env.AUTH_TOKEN || '');
+  await Promise.all(promises);
+
+  console.log('Done.');
+  console.log(results);
+} catch (error) {
+  console.error('Error fetching tile details:', error);
+}
