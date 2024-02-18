@@ -4,6 +4,12 @@
 
 A script that automatically locates free croppers around your village in the game Travian.
 
+## Other tools
+
+[🌾 Travian Crop Finder](https://github.com/kaareloun/travian-crop-finder)
+
+[🐘 Travian Elephant Finder](https://github.com/kaareloun/travian-elephant-finder)
+
 ## How to use
 
 - Login to Travian
