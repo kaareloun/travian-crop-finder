@@ -12,7 +12,7 @@ A script that automatically locates free croppers around your village in the gam
 
 ## How to use
 
-- Login to Travian
+- Login to Travian (use alt account because you will get banned)
 - Open chrome console (ctrl + shift + j)
 - Paste the following code, change `CONFIG` and press enter
 
