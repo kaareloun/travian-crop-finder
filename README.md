@@ -10,6 +10,8 @@ A script that automatically locates free croppers around your village in the gam
 
 [🐘 Travian Elephant Finder](https://github.com/kaareloun/travian-elephant-finder)
 
+[🗺️ Travian Map Parser](https://github.com/kaareloun/travian-map-parser)
+
 ## How to use
 
 - Login to Travian (use alt account because you will get banned)
